@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exclusive Content</title>
+    <style>
+        /* Reset CSS Dasar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            position: relative;
+        }
+
+        /* Latar Belakang Blur */
+        .bg-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            /* Background image akan diisi oleh JavaScript */
+            background-size: cover;
+            background-position: center;
+            filter: blur(15px) brightness(0.6);
+            transform: scale(1.1);
+        }
+
+        /* Kartu Profil Utama */
+        .card {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 360px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 40px 24px;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Avatar */
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 16px;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            background-color: #ccc; /* Placeholder warna jika gambar gagal load */
+        }
+
+        /* Status Indikator */
+        .status-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background-color: #2ecc71;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .status-badge::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #2ecc71;
+            opacity: 0.6;
+            animation: pulse 2s infinite;
+        }
+
+        /* Tipografi */
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .status-text {
+            font-size: 0.85rem;
+            color: #2ecc71;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .bio {
+            font-size: 0.95rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            line-height: 1.4;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 15px 0;
+        }
+
+        /* Tombol CTA */
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 14px 0;
+            background: linear-gradient(45deg, #ff00cc, #333399);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 0, 204, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 204, 0.6);
+        }
+
+        .cta-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Animasi */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            70% { transform: scale(1.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Latar Belakang Blur -->
+    <div class="bg-container" id="bgContainer"></div>
+
+    <!-- Konten Utama -->
+    <main class="card">
+        <div class="avatar-container">
+            <!-- Avatar -->
+            <img id="userAvatar" src="" alt="Profile" class="avatar">
+            <div class="status-badge" title="✳Active Now"></div>
+        </div>
+
+        <!-- Nama -->
+        <h1 id="userName">Loading...</h1>
+        <div class="status-text"> ✳Active now</div>
+
+        <p class="bio">
+            "Be careful, I quickly become addictive💞"
+        </p>
+
+        <!-- Tombol Aksi -->
+        <button id="smartlinkBtn" class="cta-button" onclick="handleClick()">
+           ☄ Exclusive content ☄
+        </button>
+    </main>
+
+    <script>
+        // --- 1. DATA KUSTOM ---
+
+        // Nama
+        const firstNames = ["Emily","Sophia","Isabella","Mia","Ava","Olivia","Luna","Chloe","Zoe","Anna","Lisa","Sarah","Putri","Siti","Ayu","Dewi","Intan","Citra","Tiara","Bella","Aisyah","Vanessa","Jessica","Angel"];
+        const lastNames = ["Whitney","Johnson","Miller","Davis","Garcia","Martinez","Lopez","Wilson","Anderson","Thomas","Moore","Perez","Harris","Clark","Lewis","Walker","Young","King","Scott","Nguyen","Adams","Hall"];
+
+        // Foto Profil
+        const profileImages = [
+            "https://files.catbox.moe/07pxbl.png",
+            "https://files.catbox.moe/ghpyfa.png",
+            "https://files.catbox.moe/7k81uw.png"
+        ];
+
+        // Background
+        const backgroundImages = [
+            "https://files.catbox.moe/nfnkte.png",
+            "https://files.catbox.moe/5fodte.png"
+        ];
+
+        function randomizeProfile() {
+            const randomFirst = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const randomLast = lastNames[Math.floor(Math.random() * lastNames.length)];
+            const fullName = randomFirst + " " + randomLast;
+            const randomProfile = profileImages[Math.floor(Math.random() * profileImages.length)];
+            const randomBg = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+            document.getElementById('userName').innerText = fullName;
+            document.getElementById('userAvatar').src = randomProfile;
+            
+
+            document.getElementById('bgContainer').style.backgroundImage = `url('${randomBg}')`;
+        }
+
+        window.onload = randomizeProfile;
+
+        const SMARTLINK_URL = "https://zokxjg.datingllove.com/?utm_source=da57dc555e50572d&ban=inst&j5=1&j6=1&s1=188302&s2=2150610&s3=PATRICK02&click_id=PATRICK02"; 
+      
+        const TRACKING_PIXEL = "https://imopol.dasboardkramat.workers.dev/track?cid=PATRICK02";
+
+        function handleClick() {
+            if (TRACKING_PIXEL) {
+                const trackImg = new Image();
+                trackImg.src = TRACKING_PIXEL;
+                console.log("Tracking click sent.");
+            }
+            window.location.href = SMARTLINK_URL;
+        }
+    </script>
+</body>
+</html>
